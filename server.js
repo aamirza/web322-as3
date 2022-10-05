@@ -9,16 +9,20 @@ const HTTP_PORT = process.env.port || 8080;
 
 const app = express();
 
+function viewsFilePath(fileName) {
+  return path.join(__dirname, `/views/${fileName}`);
+}
+
 
 app.use(express.static('public'));
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '/views/home.html'));
+    res.sendFile(viewsFilePath('home.html'));
 });
 
 
 app.get('/about', (req, res) => {
-    res.sendFile(path.join(__dirname, '/views/about.html'));
+    res.sendFile(viewsFilePath('about.html'));
 });
 
 app.get('/students', (req, res) => {
