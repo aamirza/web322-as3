@@ -37,7 +37,7 @@ module.exports.initialize = function() {
     });
 }
 
-function getAllStudents() {
+module.exports.getAllStudents = function() {
     return new Promise((resolve, reject) => {
         if (students.length === 0) {
             reject('no results (students) returned');
@@ -46,9 +46,6 @@ function getAllStudents() {
         }
     });
 }
-
-module.exports.getAllStudents = getAllStudents;
-
 
 module.exports.getInternationalStudents = function() {
     return new Promise((resolve, reject) => {
@@ -84,16 +81,12 @@ module.exports.addStudent = function(studentData) {
 
 function filterStudentsByPropertyValue(property, value) {
     return new Promise((resolve, reject) => {
-        getAllStudents()
-            .then((data) => {
-                const studentData = data.filter(student => student[property]?.toLowerCase() === value.toLowerCase());
-                if (studentData.length > 0) {
-                    resolve(studentData);
-                } else {
-                    reject("No results returned.");
-                }
-            })
-            .catch(reject);
+        const studentData = students.filter(student => student[property]?.toLowerCase() === value.toLowerCase());
+        if (studentData.length > 0) {
+            resolve(studentData);
+        } else {
+            reject();
+        }
     });
 }
 
@@ -103,15 +96,11 @@ module.exports.getStudentsByExpectedCredential = credential => filterStudentsByP
 
 module.exports.getStudentById = id => {
     return new Promise((resolve, reject) => {
-        getAllStudents()
-            .then((data) => {
-                const studentData = data.find(student => student.studentID === id);
-                if (studentData) {
-                    resolve(studentData);
-                } else {
-                    reject("No results returned.");
-                }
-            })
-            .catch(reject);
+        const studentData = students.find(student => student.studentID === id);
+        if (studentData) {
+            resolve(studentData);
+        } else {
+            reject("No results returned.");
+        }
     });
 }
