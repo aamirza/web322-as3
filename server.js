@@ -17,7 +17,7 @@ function viewsFilePath(fileName) {
 
 
 const storage = multer.diskStorage({
-    destination: path.join(__dirname, "/public/images/uploaded"),
+    destination: "./public/images/uploaded",
     filename: function(req, file, cb) {
         cb(null, Date.now() + path.extname(file.originalname));
     }
