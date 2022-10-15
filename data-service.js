@@ -1,5 +1,3 @@
-//const STUDENTS = require('./data/students.json');
-//const PROGRAMS = require('./data/programs.json');
 const fs = require('fs');
 const path = require('path');
 
@@ -39,8 +37,7 @@ module.exports.initialize = function() {
     });
 }
 
-
-module.exports.getAllStudents = function() {
+function getAllStudents() {
     return new Promise((resolve, reject) => {
         if (students.length === 0) {
             reject('no results (students) returned');
@@ -49,6 +46,8 @@ module.exports.getAllStudents = function() {
         }
     });
 }
+
+module.exports.getAllStudents = getAllStudents;
 
 
 module.exports.getInternationalStudents = function() {
@@ -70,5 +69,50 @@ module.exports.getPrograms = function() {
         } else {
             resolve(programs)
         }
+    });
+}
+
+module.exports.addStudent = function(studentData) {
+    return new Promise((resolve, reject) => {
+        console.log(studentData);
+        studentData.isInternationalStudent = studentData.hasOwnProperty('isInternationalStudent');
+        const maxId = Math.max(...students.map(student => parseInt(student.studentID)));
+        studentData.studentID = (maxId + 1).toString();
+        students.push(studentData);
+        resolve();
+    });
+}
+
+function filterStudentsByPropertyValue(property, value) {
+    return new Promise((resolve, reject) => {
+        getAllStudents()
+            .then((data) => {
+                const studentData = data.filter(student => student[property]?.toLowerCase() === value.toLowerCase());
+                if (studentData.length > 0) {
+                    resolve(studentData);
+                } else {
+                    reject("No results returned.");
+                }
+            })
+            .catch(reject);
+    });
+}
+
+module.exports.getStudentsByStatus = status => filterStudentsByPropertyValue('status', status);
+module.exports.getStudentsByProgramCode = programCode => filterStudentsByPropertyValue('program', programCode);
+module.exports.getStudentsByExpectedCredential = credential => filterStudentsByPropertyValue('expectedCredential', credential);
+
+module.exports.getStudentById = id => {
+    return new Promise((resolve, reject) => {
+        getAllStudents()
+            .then((data) => {
+                const studentData = data.find(student => student.studentID === id);
+                if (studentData) {
+                    resolve(studentData);
+                } else {
+                    reject("No results returned.");
+                }
+            })
+            .catch(reject);
     });
 }
